@@ -236,7 +236,7 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
       let currentTime = Date.now();
       let startTime = new Date(JSON.parse(localStorage.getItem(_uid))?.created_time);
       let timeDifference = Math.ceil((currentTime - startTime)/1000);
-      timeLeft = 60 - timeDifference;
+      timeLeft = ROUND_SECONDS - timeDifference;
       if (timeDifference >= ROUND_SECONDS) {
         // timerFill.style.width = '100%';
         return;
@@ -287,4 +287,3 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
     // cleanup on unload
     window.addEventListener('beforeunload', ()=>stopTimer());
   });
-
