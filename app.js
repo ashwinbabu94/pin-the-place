@@ -14,7 +14,7 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
     "esri/widgets/Home"
   ], function(Map, MapView, SceneView, Graphic, GraphicsLayer, Point, Polyline, geometryEngine, Home) {
 
-    const ROUND_SECONDS = 60;
+    const ROUND_SECONDS = 90;
     const MAX_ATTEMPTS = 2;
     let _uid = null;
     let guessGraphic = null;
@@ -287,3 +287,4 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
     // cleanup on unload
     window.addEventListener('beforeunload', ()=>stopTimer());
   });
+
