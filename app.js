@@ -10,11 +10,14 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
     "esri/layers/GraphicsLayer",
     "esri/geometry/Point",
     "esri/geometry/Polyline",
-    "esri/geometry/geometryEngine"  ], function(Map, MapView, SceneView, Graphic, GraphicsLayer, Point, Polyline, geometryEngine) {
+    "esri/geometry/geometryEngine",
+    "esri/widgets/Home"
+  ], function(Map, MapView, SceneView, Graphic, GraphicsLayer, Point, Polyline, geometryEngine, Home) {
 
     const ROUND_SECONDS = 60;
     const MAX_ATTEMPTS = 2;
     let _uid = null;
+    let guessGraphic = null;
 
     // DOM elements
     const timerFill = document.getElementById('timerFill');    
@@ -37,11 +40,12 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
         // Show name modal if no name is stored
         nameModal.open = true;
       } else {
-        // Welcome back the user
         // console.log(`Welcome back, ${userName}!`);
         initializeGame();
       }
-    }    // Initialize the game after name is set
+    }    
+    
+    // Initialize the game after name is set
     function initializeGame() {
       const userName = localStorage.getItem('pinThePlace_userName');
       
@@ -53,9 +57,8 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
         userNameDisplay.textContent = userName;
         userWelcome.style.display = 'block';
       }
-      
       // Game initialization logic can go here
-      // console.log('Game initialized for user:', userName);
+      getLandmarkInfo();
     }
 
     // Name input validation
@@ -78,6 +81,30 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
       }
     });
 
+    async function getLandmarkInfo (liveData) {
+      try {
+
+        if (!liveData) {
+          const { data, error } = await supabase
+          .from('active_landmark')
+          .select("*");
+          liveData = data[0];
+        }
+
+        const localData = localStorage.getItem(liveData.uid);
+        if (!localData) {
+          liveData["attempt"] = 0;
+          retryBtn.disabled = false
+          localStorage.setItem(liveData.uid, JSON.stringify(liveData));
+        }
+        _uid = liveData.uid;
+        startTimer()
+
+      } catch (error) {
+        console.log('Error fetching landmark data:', error);
+      }
+    }
+
     // Save user name to localStorage
     function saveUserName() {
       const name = nameInput.value.trim();
@@ -93,7 +120,8 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
       // Close modal and initialize game
       nameModal.open = false;
       initializeGame();
-    }    // Save name button click handler
+    }    
+    // Save name button click handler
     saveNameBtn.addEventListener('click', saveUserName);
 
     // Check for user name on app load
@@ -104,18 +132,11 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
       accuracyModal.open = false;
       maxAttemptModal.open = false;
       timeoverModal.open = false;
-      // timeoverModal.open = false;
-      // currentIndex = Math.floor(Math.random() * landmarks.length);
-      // showLandmark(currentIndex);
     });
     
-    // let currentIndex = Math.floor(Math.random() * landmarks.length);
     let timer = null;
-      let timeLeft = ROUND_SECONDS;
-      let attempt = 0;
+    let timeLeft = ROUND_SECONDS;
     let lastGuessDistance = null;
-    let clickHandler = null;
-    let roundStartTime = null;
     // Map setup
     const map = new Map({ 
       // basemap: 'streets-vector',
@@ -123,7 +144,7 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
       // basemap: "satellite",
       ground: "world-elevation"
     });
-    // const view = new MapView({ container: 'viewDiv', map: map, center: [78.9629, 20.5937], zoom: 5 });
+
     let view = new SceneView({
       map: map,
       center: [78.9629, 20.5937],
@@ -133,32 +154,21 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
     const graphics = new GraphicsLayer();
     map.add(graphics);
 
-    // Game state
-    let guessGraphic = null;
-    // let lineGraphic = null;
-    // let labelGraphic = null; // text label showing distance on map
-    // let targetGraphic = null;
-    // let targetRevealed = false;    
-
-
+    let homeWidget = new Home({
+      view: view
+    });
+    view.ui.add(homeWidget, "top-left");
 
     function makeGuessGraphic(lon, lat) {
       return new Graphic({ geometry: new Point({ longitude: lon, latitude: lat }), symbol: { type: 'simple-marker', style: 'circle', color: [24,144,255,0.9], size: '14px', outline: { color: [255,255,255], width: 2 } } });
     }
-
-    // function makeTargetGraphic(lon, lat) {
-    //   return new Graphic({ geometry: new Point({ longitude: lon, latitude: lat }), symbol: { type: 'simple-marker', style: 'circle', color: [255,107,0,0.95], size: '14px', outline: { color: [255,255,255], width: 2 } } });
-    // }
-
-    // function makeLineGraphic(lon1, lat1, lon2, lat2) {
-    //   return new Graphic({ geometry: new Polyline({ paths: [[[lon1, lat1], [lon2, lat2]]], spatialReference: { wkid: 4326 } }), symbol: { type: 'simple-line', color: [0,150,136,0.9], width: 4 } });
-    // }    
     
     // Calculate geodesic distance (km)
     function computeDistanceKm(lon1, lat1, lon2, lat2) {
       const poly = new Polyline({ paths: [[[lon1, lat1], [lon2, lat2]]], spatialReference: { wkid: 4326 } });
       return geometryEngine.geodesicLength(poly, 'kilometers');
     }    
+
     // Show accuracy modal with results
     function showAccuracyModal(distance, timeTaken) {
       modalDistance.textContent = distance !== null ? distance.toFixed(2) + ' km' : 'No guess made';
@@ -167,11 +177,11 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
       // Set message based on accuracy
       let message = 'Time\'s up!';
       if (distance !== null) {
-        if (distance < 1) {
+        if (distance <= 1) {
           message = 'Excellent! Great job!';
-        } else if (distance < 5) {
+        } else if (distance <= 5) {
           message = 'Good guess! Very close!';
-        } else if (distance < 10) {
+        } else if (distance <= 10) {
           message = 'Not bad! Keep trying!';
         } else {
           message = 'Better luck next time!';
@@ -182,12 +192,11 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
       accuracyModal.open = true;
     }    
 
-    const showTimeOverModal = () => {
+    function showTimeOverModal () {
       timeoverModal.open = true;
     }
 
-    // function enableMapClick() {
-    clickHandler = view.on('click', async function (evt) {
+    view.on('click', async function (evt) {
       const uidData = JSON.parse(localStorage.getItem(_uid));
       if (uidData.attempt >= MAX_ATTEMPTS) {
         maxAttemptModal.open = true;
@@ -219,45 +228,15 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
       lastGuessDistance = km;
 
       showAccuracyModal(lastGuessDistance, timeTaken);
-
     });
-    // }  
-
-    const getLandmarkInfo = async (liveData) => {
-      try {
-
-        if (!liveData) {
-          const { data, error } = await supabase
-          .from('active_landmark')
-          .select("*");
-          liveData = data[0];
-        }
-        
-
-        const localData = localStorage.getItem(liveData.uid);
-        if (!localData) {
-          liveData["attempt"] = 0;
-          retryBtn.disabled = false
-          localStorage.setItem(liveData.uid, JSON.stringify(liveData));
-        }
-        _uid = liveData.uid;
-        startTimer()
-
-      } catch (error) {
-        console.log('Error fetching landmark data:', error);
-      }
-      
-    }
-    getLandmarkInfo();
 
     // Timer mechanics
-    const startTimer = () =>{ 
+    function startTimer () { 
       stopTimer();
       let currentTime = Date.now();
       let startTime = new Date(JSON.parse(localStorage.getItem(_uid))?.created_time);
       let timeDifference = Math.ceil((currentTime - startTime)/1000);
       timeLeft = 60 - timeDifference;
-      // console.log('Time Difference ', timeLeft);
       if (timeDifference >= ROUND_SECONDS) {
         // timerFill.style.width = '100%';
         return;
@@ -266,14 +245,13 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
         timeLeft--;
         const pct = (timeLeft/ROUND_SECONDS)*100; 
         timerFill.style.width = pct + '%';
-        // console.log(`${timeLeft} seconds left, ${pct}% remaining`);
         if (timeLeft <= 0) { 
           stopTimer();
         }
       },1000);
     }
 
-    const stopTimer = () => { 
+    function stopTimer () { 
       if (timer) clearInterval(timer); 
     }
 
@@ -284,11 +262,9 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
           .insert([{
             name
           }]);
-          // console.log('User info saved:', data);
       } catch (error) {
         console.log('Error saving user info:', error);
       }
-      
     }
 
     // Subscribe to realtime changes
@@ -304,12 +280,10 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
             if (guessGraphic) graphics.remove(guessGraphic)
             getLandmarkInfo(payload.new);
           }
-          // console.log(payload)
         }
       )
       .subscribe();
 
     // cleanup on unload
     window.addEventListener('beforeunload', ()=>stopTimer());
-
   });

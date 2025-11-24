@@ -33,8 +33,8 @@ html,body{
   right: 5px;
   font-size: 16px;
   font-weight: 500;
-  color: #ffffff;
-  opacity: 0.9;
+  color: #ff0000;
+  opacity: 1;
   z-index: 2;
 }
 
@@ -80,10 +80,6 @@ html,body{
 
 .app{
   flex-grow: 1;
-  /* display:grid;
-  grid-template-columns:380px 1fr;
-  grid-template-areas:"panel main";
-  height:calc(100vh - var(--header-height)); */
 }
 
 .panel{
@@ -121,12 +117,12 @@ calcite-button{--calcite-ui-background-1:var(--accent);}
 .bottom-note{margin-top:14px;font-size:12px;color:#6b7b88}
 .timer-bar{
   position: absolute;
-  top: calc(var(--header-height) - 2px);
+  top: calc(var(--header-height) - 4px);
   width: 100%;
-  height:4px;
+  height:6px;
   background:#e6eef8;
   overflow:hidden;
-  z-index: 9999;
+  z-index: 999;
 }
 .timer-fill{height:100%;background:linear-gradient(90deg,#ff0000,#ffd166);width:0%}
 
