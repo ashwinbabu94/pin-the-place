@@ -136,7 +136,7 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
     
     let timer = null;
     let timeLeft = ROUND_SECONDS;
-    let lastGuessDistance = null;
+    // let lastGuessDistance = null;
     // Map setup
     const map = new Map({ 
       // basemap: 'streets-vector',
@@ -178,13 +178,15 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
       let message = 'Time\'s up!';
       if (distance !== null) {
         if (distance <= 1) {
-          message = 'Excellent! Great job!';
+          message = '🎯 Excellent! Perfect guess!';
         } else if (distance <= 5) {
-          message = 'Good guess! Very close!';
+          message = '👏 Good guess! Very close!';
         } else if (distance <= 10) {
-          message = 'Not bad! Keep trying!';
+          message = '👍 Not bad! Keep trying!';
+        } else if (distance <= 50) {
+          message = '🤔 Getting there!';
         } else {
-          message = 'Better luck next time!';
+          message = '💪 Better luck next time!';
         }
       }
       
@@ -224,11 +226,35 @@ const supabase = window.supabase.createClient(SUPABASE_API, API_KEY);
       graphics.add(guessGraphic);      
       
       // compute distance to target
-      const km = computeDistanceKm(lon, lat, data[0].longitude, data[0].latitude);
-      lastGuessDistance = km;
-
-      showAccuracyModal(lastGuessDistance, timeTaken);
+      const dist = computeDistanceKm(lon, lat, data[0].longitude, data[0].latitude);
+      
+      submitPlayerGuess(data[0].uid, dist, timeTaken);
+      showAccuracyModal(dist, timeTaken);
     });
+
+    async function submitPlayerGuess (landmarkUid, distance, timeTaken) {
+      const playerName = localStorage.getItem('pinThePlace_userName');
+      const score = distance + (timeTaken / 10);
+      const { data, error } = await supabase
+          .from('player_submissions')
+          .insert([{
+            landmark_uid: landmarkUid,
+            player_name: playerName,
+            distance_km: parseFloat(distance.toFixed(2)),
+            // time_taken_seconds: timeTaken,
+            time_taken_seconds: Math.floor(timeTaken),
+            score: parseFloat(score.toFixed(2))
+          }])
+          .select();
+
+        if (error) {
+          console.error('Error submitting to leaderboard:', error);
+          return false;
+        }
+
+        console.log('✅ Submitted to leaderboard:', data);
+        return true;
+    }
 
     // Timer mechanics
     function startTimer () { 
