@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pin the Place - Admin Panel</title>
+
+  <!-- Calcite Components UI -->
+  <link rel="stylesheet" href="admin.css" />
+  <!-- <script type="module" src="./config.js"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@esri/calcite-components/dist/calcite/calcite.css" />
+  <script type="module" src="https://unpkg.com/@esri/calcite-components/dist/calcite/calcite.esm.js"></script>
+
+</head>
+<body>
+  <!-- Login Screen -->
+  <div class="login-container" id="loginContainer">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-icon">
+          <calcite-icon icon="lock" scale="l"></calcite-icon>
+        </div>
+        <h1 class="login-title">Admin Login</h1>
+        <p class="login-subtitle">Enter your credentials to access the admin panel</p>
+      </div>
+
+      <form class="login-form" id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <calcite-input 
+            id="username" 
+            class="login-input"
+            placeholder="Enter username"
+            required>
+          </calcite-input>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <calcite-input 
+            id="password" 
+            class="login-input"
+            type="password"
+            placeholder="Enter password"
+            required>
+          </calcite-input>
+        </div>
+
+        <calcite-button 
+          id="loginButton" 
+          class="login-button" 
+          type="submit"
+          scale="l"
+          width="full"
+          icon-start="sign-in">
+          Sign In
+        </calcite-button>
+
+        <div class="login-error" id="loginError">
+          Invalid username or password. Please try again.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Content (Hidden until authenticated) -->
+  <div class="admin-content" id="adminContent">
+    <div class="admin-container">
+      <div class="main-content">
+        <!-- Image Section -->
+        <div class="image-section">
+          <div class="image-title">
+            <div style="display: flex;align-items: center;gap:1rem;justify-content: space-between;">
+              <div style="display: flex;align-items: center;gap:0.75rem;">
+                <calcite-icon icon="image" scale="m"></calcite-icon>
+                Pin the Place!
+              </div>
+              <div>
+                <div class="title" id="landmarkTitle">Title</div>
+              </div>
+            </div>
+            <div class="timer-bar" aria-hidden="true">
+              <div id="timerFill" class="timer-fill"></div>
+            </div> 
+          </div>
+          
+          <div class="image-container">
+            <div class="image-display" id="imageDisplay">
+              <div class="image-placeholder" id="placeholder">
+                <calcite-icon icon="image" scale="l"></calcite-icon>
+                <span>Loading image...</span>
+              </div>
+              <img id="mainImage" class="main-image" style="display: none;" alt="Landmark Image" />
+              <div class="loading-overlay" id="loadingOverlay">
+                <calcite-loader active></calcite-loader>
+              </div>
+            </div>
+          </div>
+        </div>    
+      </div>
+      <div class="control-group">
+        <calcite-button 
+          id="refreshButton" 
+          class="refresh-button" 
+          icon-start="refresh"
+          scale="l">
+        </calcite-button>
+        <calcite-button 
+          id="refreshLeaderboardButton" 
+          class="refresh-leaderboard-button" 
+          icon-start="dashboard-graph"
+          scale="l"
+          title="Refresh Leaderboard">
+        </calcite-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaderboard Dashboard (Must be before script to ensure DOM access) -->
+  <div class="leaderboard-toast" id="leaderboardToast">
+    <div class="leaderboard-header">
+      <!-- <calcite-icon icon="trophy" scale="s"></calcite-icon> -->
+      <span>Top Players</span>
+    </div>
+    <div class="leaderboard-content" id="leaderboardContent">
+      <div class="leaderboard-empty">
+        <calcite-icon icon="users" scale="m"></calcite-icon>
+        <span>Waiting for players...</span>
+      </div>
+    </div>
+  </div>
+  <script src="./admin.js" defer></script>
+</body>
+</html>

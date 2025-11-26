@@ -1,0 +1,600 @@
+:root {
+      --accent-color: #0b5fa5;
+      --secondary-color: #1e88e5;
+      --success-color: #00897b;
+      --warning-color: #ff6b00;
+      --text-primary: #0b3b66;
+      --text-secondary: #6b7b88;
+      --bg-subtle: #f8fbff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Avenir Next', 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+
+    .admin-container {
+      height: 100vh;
+      /* padding: 20px; */
+    }
+
+    .admin-header {
+      background: linear-gradient(135deg, var(--accent-color) 0%, var(--secondary-color) 100%);
+      border-radius: 16px;
+      padding: 24px 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(11, 95, 165, 0.15);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: white;
+    }
+
+    .admin-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-text h1 {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-text p {
+      margin: 4px 0 0 0;
+      opacity: 0.9;
+      font-size: 16px;
+    }
+
+    .main-content {
+      display: flex;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+      /* grid-template-columns: 1fr 300px;
+      gap: 18px;
+      max-width: 1400px;
+      margin: 0 auto; */
+    }
+
+    .image-section {
+      width: 50%;
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(11, 95, 165, 0.08);
+    }
+
+    .controls-section {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(11, 95, 165, 0.08);
+      height: fit-content;
+    }
+
+    .image-container {
+      text-align: center;
+    }
+
+    .image-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      /* align-items: center; */
+      /* gap: 12px; */
+    }
+
+    .image-title calcite-icon {
+      --calcite-ui-icon-color: var(--accent-color);
+    }
+
+    .image-display {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      background: var(--bg-subtle);
+      border: 2px solid rgba(11, 95, 165, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .image-display:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .main-image {
+      width: 100%;
+      height: 400px;
+      object-fit: scale-down;
+      display: block;
+      transition: opacity 0.3s ease;
+    }
+
+    .image-placeholder {
+      width: 100%;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: var(--text-secondary);
+      font-size: 18px;
+    }
+
+    .image-placeholder calcite-icon {
+      margin-bottom: 16px;
+      --calcite-ui-icon-color: var(--text-secondary);
+    }
+
+    .image-name {
+      margin-top: 16px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--bg-subtle);
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: 1px solid rgba(11, 95, 165, 0.1);
+    }
+
+    .controls-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .controls-title calcite-icon {
+      --calcite-ui-icon-color: var(--accent-color);
+    }
+
+    .control-group {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1;
+    }
+
+    .control-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+
+    .status-ready {
+      background: rgba(0, 137, 123, 0.1);
+      color: var(--success-color);
+      border: 1px solid rgba(0, 137, 123, 0.2);
+    }
+
+    .status-loading {
+      background: rgba(255, 107, 0, 0.1);
+      color: var(--warning-color);
+      border: 1px solid rgba(255, 107, 0, 0.2);
+    }
+
+    .status-error {
+      background: rgba(244, 67, 54, 0.1);
+      color: #f44336;
+      border: 1px solid rgba(244, 67, 54, 0.2);
+    }
+
+    /* .refresh-button {
+      width: 100%;
+      --calcite-ui-background-1: var(--accent-color);
+      --calcite-ui-text-1: white;
+      margin-bottom: 16px;
+    }
+
+    .refresh-button:hover {
+      --calcite-ui-background-1: var(--secondary-color);
+    } */
+
+    .api-info {
+      background: var(--bg-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid rgba(11, 95, 165, 0.1);
+    }
+
+    .api-info h4 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .api-info p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }    /* Login Form Styles */
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--accent-color) 0%, var(--secondary-color) 100%);
+      padding: 20px;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 20px;
+      padding: 48px 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-header {
+      margin-bottom: 32px;
+    }
+
+    .login-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .login-icon calcite-icon {
+      --calcite-ui-icon-color: white;
+    }
+
+    .login-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 8px 0;
+    }
+
+    .login-subtitle {
+      color: var(--text-secondary);
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .login-input {
+      width: 100%;
+      --calcite-ui-focus-color: var(--accent-color);
+    }
+
+    .login-button {
+      --calcite-ui-background-1: var(--accent-color);
+      --calcite-ui-text-1: white;
+      margin-top: 8px;
+    }
+
+    .login-button:hover {
+      --calcite-ui-background-1: var(--secondary-color);
+    }
+
+    .login-error {
+      background: rgba(244, 67, 54, 0.1);
+      color: #f44336;
+      border: 1px solid rgba(244, 67, 54, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .login-error.show {
+      display: block;
+    }
+
+    .admin-content {
+      display: none;
+    }
+
+    .admin-content.authenticated {
+      display: block;
+    }
+
+    /* @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .admin-header {
+        padding: 20px 24px;
+      }
+
+      .header-text h1 {
+        font-size: 24px;
+      }
+
+      .image-section,
+      .controls-section {
+        padding: 24px;
+      }
+
+      .main-image,
+      .image-placeholder {
+        height: 300px;
+      }
+
+      .login-card {
+        padding: 32px 24px;
+      }
+
+      .login-title {
+        font-size: 24px;
+      }
+    } */
+
+    .caption{padding:12px}
+    .caption .title{font-weight:700;color:#0b3b66}
+    .caption .sub{color:#6b7b88;font-size:13px;margin-top:6px}
+    .timer-bar{height:6px;background:#e6eef8;border-radius:6px;overflow:hidden;margin-top:8px}
+    .timer-fill{height:100%;background:linear-gradient(90deg,#ff0000,#ffd166);width:0%}
+
+    /* ===== CONTROL GROUP STYLES ===== */
+    .control-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .refresh-leaderboard-button {
+      --calcite-ui-border-1: var(--accent-color);
+      --calcite-ui-text-1: var(--accent-color);
+    }
+
+    .refresh-leaderboard-button:hover {
+      --calcite-ui-background-1: rgba(11, 95, 165, 0.05);
+    }
+
+    /* ===== LEADERBOARD STYLES ===== */
+    .leaderboard-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      border: 2px solid rgba(11, 95, 165, 0.1);
+      width: 360px;
+      max-height: 500px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+    }
+
+    .leaderboard-toast.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .leaderboard-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--bg-subtle);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .leaderboard-header calcite-icon {
+      --calcite-ui-icon-color: #FFD700;
+    }
+
+    .leaderboard-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .leaderboard-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      color: var(--text-secondary);
+      text-align: center;
+      gap: 12px;
+    }
+
+    .leaderboard-empty calcite-icon {
+      --calcite-ui-icon-color: var(--text-secondary);
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--bg-subtle);
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      animation: slideIn 0.3s ease forwards;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .leaderboard-item:hover {
+      background: #e6f2ff;
+      transform: translateX(4px);
+    }
+
+    .player-rank {
+      font-size: 24px;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .player-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .player-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .player-stats {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .player-stats .stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .player-stats calcite-icon {
+      --calcite-ui-icon-color: var(--text-secondary);
+    }
+
+    .player-score {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent-color);
+      background: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Scrollbar styling */
+    .leaderboard-content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .leaderboard-content::-webkit-scrollbar-track {
+      background: var(--bg-subtle);
+      border-radius: 3px;
+    }
+
+    .leaderboard-content::-webkit-scrollbar-thumb {
+      background: var(--accent-color);
+      border-radius: 3px;
+    }
+
+    .leaderboard-content::-webkit-scrollbar-thumb:hover {
+      background: var(--secondary-color);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .leaderboard-toast {
+        width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+      }
+    }
